@@ -1,6 +1,8 @@
 package com.phonebook.serviceImplement;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import com.phonebook.beans.ContactDetails;
 import com.phonebook.repository.ContactDetailsRepository;
@@ -17,34 +19,56 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 
 	@Override
 	public String createContact(ContactDetails contact) {
+		ContactDetails save = contactDetailsRepository.save(contact);
+		if (save != null) {
+			return "Contact Saved Successfully";
+		}
 
-		return null;
+		return "Contact is not saved, please try again...";
 	}
 
 	@Override
 	public List<ContactDetails> displayAllContacts() {
-		// TODO Auto-generated method stub
+		List<ContactDetails> findAll = contactDetailsRepository.findAll();
+		if (findAll != null) {
+			return findAll;
+		}
+
 		return null;
 	}
-	
+
 	@Override
 	public ContactDetails getContactById(Integer contactId) {
-		// TODO Auto-generated method stub
+
+		Optional<ContactDetails> findById = contactDetailsRepository.findById(contactId);
+		if (findById.isPresent()) {
+			return findById.get();
+		}
 		return null;
 	}
 
 	@Override
 	public String updateContact(ContactDetails contact) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Optional<ContactDetails> contactDetails = contactDetailsRepository.findById(contact.getContactId());
+		
+		if(contactDetails.isPresent()) {
+		contactDetails.get().setContactName(contact.getContactName());
+		contactDetails.get().setContactEmail(contact.getContactEmail());
+		contactDetails.get().setContactNumber(contact.getContactNumber());		
+		 contactDetailsRepository.save(contactDetails.get());
+		
+			return "Contact Updated Successfully";
+		}
+		
+		return "Contact is not updated, please try again...";
+		
 	}
 
 	@Override
 	public String deleteContactById(Integer contactId) {
-		// TODO Auto-generated method stub
-		return null;
+		contactDetailsRepository.deleteById(contactId);
+		return "Contact deleted";
 	}
-
-	
 
 }

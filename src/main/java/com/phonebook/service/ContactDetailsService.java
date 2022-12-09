@@ -2,12 +2,11 @@ package com.phonebook.service;
 
 import java.util.List;
 
-
-	
+import org.springframework.stereotype.Service;
 
 import com.phonebook.beans.ContactDetails;
 
-
+@Service
 public interface ContactDetailsService {
 	
 	public String createContact(ContactDetails contact);

@@ -2,6 +2,7 @@ package com.phonebook.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ public class ContactDetailsController {
 	
 	private ContactDetailsService contactDetailsService;
 	
+	
 	public ContactDetailsController(ContactDetailsService contactDetailsService)
 	{
 		this.contactDetailsService=contactDetailsService;
@@ -30,30 +32,35 @@ public class ContactDetailsController {
 	
 	@PostMapping("/savecontact")
 	public ResponseEntity<String> createContact(@RequestBody ContactDetails contact){
-		return null;
+		
+		String response = contactDetailsService.createContact(contact);	
+		return new ResponseEntity<String>(response, HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/allContacts")
+	@GetMapping("/allcontacts")
 	public ResponseEntity<List<ContactDetails>> displayAllContacts(){
-	
-		return null;	
+			
+		return new ResponseEntity<List<ContactDetails>>(contactDetailsService.displayAllContacts(), HttpStatus.OK);	
 	}
 	
 	@GetMapping("/{contactId}")
 	public ResponseEntity<ContactDetails> getContactById(@PathVariable("contactId") Integer conatcId){
-		return null;
+		
+		return new ResponseEntity<ContactDetails>(contactDetailsService.getContactById(conatcId), HttpStatus.OK);
 	}
 	
-	@PutMapping("/editcontact")
+	@PutMapping("/updatecontact")
 	public ResponseEntity<String> updateContact(@RequestBody ContactDetails contact){
+		
+		return new ResponseEntity<String>(contactDetailsService.updateContact(contact), HttpStatus.OK);
 	
-		return null;
+		
 	}
 	
 	@DeleteMapping("/delete/{contactId}")
 	public ResponseEntity<String> deleteContact(@PathVariable("contactId") Integer contactId){
 		
-		return null;
+		return new ResponseEntity<String>(contactDetailsService.deleteContactById(contactId), HttpStatus.OK);
 	}
 
 }
