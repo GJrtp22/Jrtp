@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import com.phonebook.beans.ContactDetails;
+import com.phonebook.exception.ContactNotFoundException;
 import com.phonebook.repository.ContactDetailsRepository;
 import com.phonebook.service.ContactDetailsService;
 
@@ -19,8 +20,8 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 
 	@Override
 	public String createContact(ContactDetails contact) {
-		ContactDetails save = contactDetailsRepository.save(contact);
-		if (save != null) {
+		contact = contactDetailsRepository.save(contact);
+		if (contact != null) {
 			return "Contact Saved Successfully";
 		}
 
@@ -29,46 +30,47 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 
 	@Override
 	public List<ContactDetails> displayAllContacts() {
-		List<ContactDetails> findAll = contactDetailsRepository.findAll();
-		if (findAll != null) {
-			return findAll;
-		}
 
-		return null;
+		return contactDetailsRepository.findAll();
 	}
 
 	@Override
 	public ContactDetails getContactById(Integer contactId) {
 
-		Optional<ContactDetails> findById = contactDetailsRepository.findById(contactId);
-		if (findById.isPresent()) {
-			return findById.get();
-		}
-		return null;
+		return contactDetailsRepository.findById(contactId)
+				.orElseThrow(() -> new ContactNotFoundException("Contact ID: " + contactId + "Not Exists"));
+
 	}
 
 	@Override
 	public String updateContact(ContactDetails contact) {
-		
+
 		Optional<ContactDetails> contactDetails = contactDetailsRepository.findById(contact.getContactId());
-		
-		if(contactDetails.isPresent()) {
-		contactDetails.get().setContactName(contact.getContactName());
-		contactDetails.get().setContactEmail(contact.getContactEmail());
-		contactDetails.get().setContactNumber(contact.getContactNumber());		
-		 contactDetailsRepository.save(contactDetails.get());
-		
+
+		if (contactDetails.isPresent()) {
+			contactDetails.get().setContactName(contact.getContactName());
+			contactDetails.get().setContactEmail(contact.getContactEmail());
+			contactDetails.get().setContactNumber(contact.getContactNumber());
+			contactDetailsRepository.save(contactDetails.get());
+
 			return "Contact Updated Successfully";
 		}
-		
-		return "Contact is not updated, please try again...";
-		
+
+		else {
+			throw new ContactNotFoundException(" ContactId: " + contact.getContactId() + "Not Exists");
+		}
+
 	}
 
 	@Override
 	public String deleteContactById(Integer contactId) {
-		contactDetailsRepository.deleteById(contactId);
-		return "Contact deleted";
+
+		if (contactDetailsRepository.existsById(contactId)) {
+			contactDetailsRepository.deleteById(contactId);
+			return "Contact deleted";
+		} else {
+			return "No record Found";
+		}
 	}
 
 }
