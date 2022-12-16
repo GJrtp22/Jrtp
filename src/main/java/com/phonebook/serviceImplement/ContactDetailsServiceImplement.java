@@ -22,6 +22,7 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 
 	@Override
 	public String createContact(ContactDetails contact) {
+		contact.setIsActive("Y");
 		contact = contactDetailsRepository.save(contact);
 		if (contact.getContactId() != null) {
 			return "Contact Saved Successfully";
@@ -33,7 +34,7 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 	@Override
 	public List<ContactDetails> displayAllContacts() {
 
-		return contactDetailsRepository.findAll();
+		return contactDetailsRepository.findByIsActive("Y");
 	}
 
 	@Override
@@ -68,7 +69,10 @@ public class ContactDetailsServiceImplement implements ContactDetailsService {
 	public String deleteContactById(Integer contactId) {
 
 		if (contactDetailsRepository.existsById(contactId)) {
-			contactDetailsRepository.deleteById(contactId);
+			Optional<ContactDetails> findById = contactDetailsRepository.findById(contactId);
+			ContactDetails contactDetails = findById.get();
+			contactDetails.setIsActive("F");
+			contactDetailsRepository.save(contactDetails);
 			return "Contact deleted";
 		} else {
 			return "No record Found";

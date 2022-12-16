@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,8 @@ import com.phonebook.service.ContactDetailsService;
 
 
 @RestController
-@RequestMapping("api/phonebook")
+
+@CrossOrigin
 public class ContactDetailsController {
 	
 	private ContactDetailsService contactDetailsService;
@@ -30,14 +32,14 @@ public class ContactDetailsController {
 		this.contactDetailsService=contactDetailsService;
 	}
 	
-	@PostMapping("/savecontact")
+	@PostMapping("/contact")
 	public ResponseEntity<String> createContact(@RequestBody ContactDetails contact){
 		
 		String response = contactDetailsService.createContact(contact);	
 		return new ResponseEntity<String>(response, HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/allcontacts")
+	@GetMapping("/contacts")
 	public ResponseEntity<List<ContactDetails>> displayAllContacts(){
 			
 		return new ResponseEntity<List<ContactDetails>>(contactDetailsService.displayAllContacts(), HttpStatus.OK);	
@@ -49,7 +51,7 @@ public class ContactDetailsController {
 		return new ResponseEntity<ContactDetails>(contactDetailsService.getContactById(conatcId), HttpStatus.OK);
 	}
 	
-	@PutMapping("/updatecontact")
+	@PutMapping("/contact")
 	public ResponseEntity<String> updateContact(@RequestBody ContactDetails contact){
 		
 		return new ResponseEntity<String>(contactDetailsService.updateContact(contact), HttpStatus.OK);
@@ -57,7 +59,7 @@ public class ContactDetailsController {
 		
 	}
 	
-	@DeleteMapping("/delete/{contactId}")
+	@DeleteMapping("/{contactId}")
 	public ResponseEntity<String> deleteContact(@PathVariable("contactId") Integer contactId){
 		
 		return new ResponseEntity<String>(contactDetailsService.deleteContactById(contactId), HttpStatus.OK);
